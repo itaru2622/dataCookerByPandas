@@ -110,11 +110,15 @@ def findIdx(expr:str, candidates:pd.Index, startswith:bool=False, regex:bool=Fal
 
     idx = None
     if startswith:
+        if candidates is None:
+           raise RuntimeError('candidates not specified.')
         idx = candidates [ candidates.str.startswith(expr) ]
         if any(idx):
             return idx.tolist()
 
     if regex:
+        if candidates is None:
+           raise RuntimeError('candidates not specified.')
         idx = candidates [ candidates.str.contains(expr, regex=True) ]
         if any(idx):
             return idx.tolist()
@@ -124,9 +128,12 @@ def findIdx(expr:str, candidates:pd.Index, startswith:bool=False, regex:bool=Fal
             expr = expr.split(',')
         else:
             expr = [ expr ]
-        idx = candidates [ candidates.str.isin(expr) ]
-        if any(idx):
-            return idx.tolist()
+        if candidates is None:
+            return expr
+        else:
+            idx = candidates [ candidates.str.isin(expr) ]
+            if any(idx):
+               return idx.tolist()
     return idx
 
 def categorizeKWArgs(kwargs: dict[str, Any], nssep:str='::') ->  tuple[ Union[None,dict[str,Any]],  Union[None, dict[str,dict[str,Any]]] ]:
@@ -262,7 +269,8 @@ if __name__ == '__main__':
         pd.set_option('display.width', None)
 
     # phase 2) cooking data        (-m cook=S,Filter,...')
-    todo = myopts.get('cook','').split(',')
+    todo = myopts.get('cook','')
+    todo = findIdx(todo, None, isin=True) # just todo.split(',')
     for idx, ops in enumerate( todo ):
 
         # cook data, according to the request...
