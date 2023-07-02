@@ -255,6 +255,10 @@ if __name__ == '__main__':
     #   myopts = categorizeKWArgs(args.myopts)
     myopts = args.myopts
 
+    # add index=False when 'index' is not in inargs nor outargs
+    if 'index' not in args.inargs.keys() and 'indexx' not in args.outargs.keys():
+        args.outargs['index'] = False
+
     # phase 1) read data
     reader=myopts.get('reader', None)
     df = readDF(args.input, reader=reader, **(args.inargs))
