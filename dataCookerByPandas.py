@@ -131,7 +131,7 @@ def findIdx(expr:str, candidates:pd.Index, startswith:bool=False, regex:bool=Fal
         if candidates is None:
             return expr
         else:
-            idx = candidates [ candidates.str.isin(expr) ]
+            idx = candidates [ candidates.isin(expr) ]
             if any(idx):
                return idx.tolist()
     return idx
